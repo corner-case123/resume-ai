@@ -1,11 +1,14 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 
+const DEFAULT_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+
 /**
  * Analyze a resume using Google Gemini AI.
  * Returns structured JSON with scores, skills, job matches, improvements, etc.
  */
 export async function analyzeResume(apiKey, resumeText) {
-  const genAI = new GoogleGenerativeAI(apiKey);
+  const activeKey = (apiKey && apiKey.trim()) || DEFAULT_API_KEY;
+  const genAI = new GoogleGenerativeAI(activeKey);
 
   const prompt = `You are an expert career counselor and resume analyst. Analyze the following resume text and return a comprehensive JSON analysis.
 

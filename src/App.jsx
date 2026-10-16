@@ -2,12 +2,13 @@ import React, { useState, useCallback } from 'react';
 import Navbar from './components/Navbar.jsx';
 import Hero from './components/Hero.jsx';
 import UploadZone from './components/UploadZone.jsx';
-import ApiKeyInput from './components/ApiKeyInput.jsx';
 import LoadingState from './components/LoadingState.jsx';
 import ResultsDashboard from './components/ResultsDashboard.jsx';
 import { extractText } from './services/pdfService.js';
 import { analyzeResume } from './services/geminiService.js';
 import { FiZap, FiAlertTriangle } from 'react-icons/fi';
+
+const DEFAULT_API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
 
 // App states
 const STATE = {
@@ -20,25 +21,9 @@ export default function App() {
   const [appState, setAppState] = useState(STATE.IDLE);
   const [file, setFile] = useState(null);
   const [rawText, setRawText] = useState('');
-  const [apiKey, setApiKey] = useState(() => {
-    try {
-      return localStorage.getItem('resumeai_api_key') || '';
-    } catch {
-      return '';
-    }
-  });
+  const [apiKey] = useState(DEFAULT_API_KEY);
   const [results, setResults] = useState(null);
   const [error, setError] = useState(null);
-
-  // Save API key to localStorage when it changes
-  const handleApiKeyChange = useCallback((key) => {
-    setApiKey(key);
-    try {
-      localStorage.setItem('resumeai_api_key', key);
-    } catch {
-      // localStorage unavailable
-    }
-  }, []);
 
   const handleFileSelect = useCallback((selectedFile) => {
     setFile(selectedFile);
@@ -63,10 +48,6 @@ export default function App() {
     setError(null);
 
     // Validation
-    if (!apiKey.trim()) {
-      setError('Please enter your Gemini API key to proceed.');
-      return;
-    }
     if (!file && !rawText.trim()) {
       setError('Please upload a resume file or paste resume text.');
       return;
@@ -86,7 +67,7 @@ export default function App() {
       }
 
       // Analyze with Gemini
-      const analysisResults = await analyzeResume(apiKey, resumeText);
+      const analysisResults = await analyzeResume(apiKey || DEFAULT_API_KEY, resumeText);
       setResults(analysisResults);
       setAppState(STATE.RESULTS);
 
@@ -110,7 +91,7 @@ export default function App() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
 
-  const canAnalyze = apiKey.trim() && (file || rawText.trim());
+  const canAnalyze = Boolean(file || rawText.trim());
 
   return (
     <>
@@ -129,8 +110,6 @@ export default function App() {
                   {error}
                 </div>
               )}
-
-              <ApiKeyInput apiKey={apiKey} onApiKeyChange={handleApiKeyChange} />
 
               <UploadZone
                 file={file}
