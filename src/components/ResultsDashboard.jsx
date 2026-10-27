@@ -1,11 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import {
   FiAward, FiCpu, FiTarget, FiTrendingUp,
   FiCheckCircle, FiAlertCircle, FiArrowUpRight,
   FiBriefcase, FiZap, FiAlertTriangle,
-  FiCheck, FiX, FiMinus
+  FiCheck, FiX, FiMinus, FiSearch
 } from 'react-icons/fi';
+import JobFinder from './JobFinder.jsx';
 
 const fadeInUp = {
   hidden: { opacity: 0, y: 20 },
@@ -53,7 +54,9 @@ function FormatCheckItem({ label, passed }) {
   );
 }
 
-export default function ResultsDashboard({ results, onReset }) {
+export default function ResultsDashboard({ results, resumeText, onReset }) {
+  const [activeTab, setActiveTab] = useState('analysis');
+
   if (!results) return null;
 
   const {
@@ -80,257 +83,292 @@ export default function ResultsDashboard({ results, onReset }) {
         <p>{summary}</p>
       </div>
 
-      {/* Score Cards */}
-      <div className="score-grid" id="score-grid">
-        <ScoreCard
-          label="Overall Score"
-          value={overallScore}
-          type="overall"
-          icon={<FiAward />}
-          index={0}
-        />
-        <ScoreCard
-          label="ATS Compatibility"
-          value={atsScore}
-          type="ats"
-          icon={<FiCpu />}
-          index={1}
-        />
-        <ScoreCard
-          label="Skills Score"
-          value={skillsScore}
-          type="skills"
-          icon={<FiTarget />}
-          index={2}
-        />
-        <ScoreCard
-          label="Impact Score"
-          value={impactScore}
-          type="impact"
-          icon={<FiTrendingUp />}
-          index={3}
-        />
+      {/* Tab Navigation */}
+      <div className="results-tabs" id="results-tabs">
+        <button
+          className={`results-tab ${activeTab === 'analysis' ? 'active' : ''}`}
+          onClick={() => setActiveTab('analysis')}
+        >
+          <FiAward /> Resume Analysis
+        </button>
+        <button
+          className={`results-tab ${activeTab === 'jobs' ? 'active' : ''}`}
+          onClick={() => setActiveTab('jobs')}
+        >
+          <FiSearch /> AI Job Finder
+          <span className="results-tab-badge">NEW</span>
+        </button>
       </div>
 
-      {/* Skills + Strengths/Weaknesses */}
-      <div className="detail-grid">
-        {/* Skills Panel */}
-        <motion.div
-          className="detail-panel"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5, duration: 0.5 }}
-        >
-          <div className="detail-panel-header">
-            <div className="detail-panel-icon purple">
-              <FiTarget />
-            </div>
-            <h3 className="detail-panel-title">Skills Assessment</h3>
+      {/* Tab Content */}
+      {activeTab === 'analysis' && (
+        <div className="results-tab-content">
+          {/* Score Cards */}
+          <div className="score-grid" id="score-grid">
+            <ScoreCard
+              label="Overall Score"
+              value={overallScore}
+              type="overall"
+              icon={<FiAward />}
+              index={0}
+            />
+            <ScoreCard
+              label="ATS Compatibility"
+              value={atsScore}
+              type="ats"
+              icon={<FiCpu />}
+              index={1}
+            />
+            <ScoreCard
+              label="Skills Score"
+              value={skillsScore}
+              type="skills"
+              icon={<FiTarget />}
+              index={2}
+            />
+            <ScoreCard
+              label="Impact Score"
+              value={impactScore}
+              type="impact"
+              icon={<FiTrendingUp />}
+              index={3}
+            />
           </div>
 
-          {skills?.strong?.length > 0 && (
-            <>
-              <p style={{ fontSize: '0.8rem', color: '#9e9eb8', marginBottom: '8px', fontWeight: 500 }}>Strong Skills</p>
-              <div className="skills-list" style={{ marginBottom: '16px' }}>
-                {skills.strong.map((skill, i) => (
-                  <span key={i} className="skill-tag strong">{skill}</span>
-                ))}
-              </div>
-            </>
-          )}
-
-          {skills?.moderate?.length > 0 && (
-            <>
-              <p style={{ fontSize: '0.8rem', color: '#9e9eb8', marginBottom: '8px', fontWeight: 500 }}>Moderate Skills</p>
-              <div className="skills-list" style={{ marginBottom: '16px' }}>
-                {skills.moderate.map((skill, i) => (
-                  <span key={i} className="skill-tag moderate">{skill}</span>
-                ))}
-              </div>
-            </>
-          )}
-
-          {skills?.missing?.length > 0 && (
-            <>
-              <p style={{ fontSize: '0.8rem', color: '#9e9eb8', marginBottom: '8px', fontWeight: 500 }}>Recommended to Add</p>
-              <div className="skills-list">
-                {skills.missing.map((skill, i) => (
-                  <span key={i} className="skill-tag missing">{skill}</span>
-                ))}
-              </div>
-            </>
-          )}
-        </motion.div>
-
-        {/* Strengths & Weaknesses */}
-        <motion.div
-          className="detail-panel"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <div className="detail-panel-header">
-            <div className="detail-panel-icon green">
-              <FiZap />
-            </div>
-            <h3 className="detail-panel-title">Strengths & Weaknesses</h3>
-          </div>
-
-          {strengths?.length > 0 && (
-            <div className="sw-list" style={{ marginBottom: '16px' }}>
-              {strengths.map((item, i) => (
-                <div key={i} className="sw-item strength">
-                  <span className="sw-item-icon"><FiCheckCircle /></span>
-                  <span>{item}</span>
+          {/* Skills + Strengths/Weaknesses */}
+          <div className="detail-grid">
+            {/* Skills Panel */}
+            <motion.div
+              className="detail-panel"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.5, duration: 0.5 }}
+            >
+              <div className="detail-panel-header">
+                <div className="detail-panel-icon purple">
+                  <FiTarget />
                 </div>
-              ))}
-            </div>
-          )}
+                <h3 className="detail-panel-title">Skills Assessment</h3>
+              </div>
 
-          {weaknesses?.length > 0 && (
-            <div className="sw-list">
-              {weaknesses.map((item, i) => (
-                <div key={i} className="sw-item weakness">
-                  <span className="sw-item-icon"><FiAlertCircle /></span>
-                  <span>{item}</span>
-                </div>
-              ))}
-            </div>
-          )}
-        </motion.div>
-      </div>
-
-      {/* Job Matches */}
-      {jobMatches?.length > 0 && (
-        <motion.div
-          className="full-panel"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7, duration: 0.5 }}
-        >
-          <div className="detail-panel-header">
-            <div className="detail-panel-icon blue">
-              <FiBriefcase />
-            </div>
-            <h3 className="detail-panel-title">Job Matches</h3>
-          </div>
-          <div className="job-list" id="job-list">
-            {jobMatches.map((job, i) => {
-              const matchLevel = job.matchPercentage >= 80 ? 'high' : job.matchPercentage >= 60 ? 'medium' : 'low';
-              return (
-                <div key={i} className="job-card">
-                  <div className="job-card-header">
-                    <h4 className="job-card-title">{job.title}</h4>
-                    <span className={`job-card-match ${matchLevel}`}>
-                      {job.matchPercentage}% Match
-                    </span>
+              {skills?.strong?.length > 0 && (
+                <>
+                  <p style={{ fontSize: '0.8rem', color: '#9e9eb8', marginBottom: '8px', fontWeight: 500 }}>Strong Skills</p>
+                  <div className="skills-list" style={{ marginBottom: '16px' }}>
+                    {skills.strong.map((skill, i) => (
+                      <span key={i} className="skill-tag strong">{skill}</span>
+                    ))}
                   </div>
-                  <p className="job-card-description">{job.description}</p>
-                  {job.requiredSkills?.length > 0 && (
-                    <div className="job-card-skills">
-                      {job.requiredSkills.map((skill, j) => (
-                        <span key={j} className="job-card-skill">{skill}</span>
-                      ))}
+                </>
+              )}
+
+              {skills?.moderate?.length > 0 && (
+                <>
+                  <p style={{ fontSize: '0.8rem', color: '#9e9eb8', marginBottom: '8px', fontWeight: 500 }}>Moderate Skills</p>
+                  <div className="skills-list" style={{ marginBottom: '16px' }}>
+                    {skills.moderate.map((skill, i) => (
+                      <span key={i} className="skill-tag moderate">{skill}</span>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {skills?.missing?.length > 0 && (
+                <>
+                  <p style={{ fontSize: '0.8rem', color: '#9e9eb8', marginBottom: '8px', fontWeight: 500 }}>Recommended to Add</p>
+                  <div className="skills-list">
+                    {skills.missing.map((skill, i) => (
+                      <span key={i} className="skill-tag missing">{skill}</span>
+                    ))}
+                  </div>
+                </>
+              )}
+            </motion.div>
+
+            {/* Strengths & Weaknesses */}
+            <motion.div
+              className="detail-panel"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+            >
+              <div className="detail-panel-header">
+                <div className="detail-panel-icon green">
+                  <FiZap />
+                </div>
+                <h3 className="detail-panel-title">Strengths & Weaknesses</h3>
+              </div>
+
+              {strengths?.length > 0 && (
+                <div className="sw-list" style={{ marginBottom: '16px' }}>
+                  {strengths.map((item, i) => (
+                    <div key={i} className="sw-item strength">
+                      <span className="sw-item-icon"><FiCheckCircle /></span>
+                      <span>{item}</span>
                     </div>
-                  )}
+                  ))}
                 </div>
-              );
-            })}
+              )}
+
+              {weaknesses?.length > 0 && (
+                <div className="sw-list">
+                  {weaknesses.map((item, i) => (
+                    <div key={i} className="sw-item weakness">
+                      <span className="sw-item-icon"><FiAlertCircle /></span>
+                      <span>{item}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </motion.div>
           </div>
-        </motion.div>
-      )}
 
-      {/* Improvements + Skill Gaps */}
-      <div className="detail-grid">
-        {/* Improvements */}
-        {improvements?.length > 0 && (
-          <motion.div
-            className="detail-panel"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.8, duration: 0.5 }}
-          >
-            <div className="detail-panel-header">
-              <div className="detail-panel-icon orange">
-                <FiArrowUpRight />
-              </div>
-              <h3 className="detail-panel-title">Improvement Tips</h3>
-            </div>
-            <div className="improvement-list" id="improvement-list">
-              {improvements.map((tip, i) => (
-                <div key={i} className="improvement-item">
-                  <span className="improvement-item-icon"><FiAlertTriangle /></span>
-                  <span>{tip}</span>
+          {/* Job Matches (original AI-suggested) */}
+          {jobMatches?.length > 0 && (
+            <motion.div
+              className="full-panel"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.7, duration: 0.5 }}
+            >
+              <div className="detail-panel-header">
+                <div className="detail-panel-icon blue">
+                  <FiBriefcase />
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-
-        {/* Skill Gaps */}
-        {skillGaps?.length > 0 && (
-          <motion.div
-            className="detail-panel"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
-          >
-            <div className="detail-panel-header">
-              <div className="detail-panel-icon red">
-                <FiAlertCircle />
+                <h3 className="detail-panel-title">AI-Suggested Roles</h3>
               </div>
-              <h3 className="detail-panel-title">Skill Gaps to Fill</h3>
-            </div>
-            <div className="improvement-list">
-              {skillGaps.map((gap, i) => (
-                <div key={i} className="improvement-item">
-                  <span className="improvement-item-icon" style={{
-                    color: gap.importance === 'high' ? '#ff6b6b' : gap.importance === 'medium' ? '#fdcb6e' : '#74b9ff'
-                  }}>
-                    {gap.importance === 'high' ? '🔴' : gap.importance === 'medium' ? '🟡' : '🔵'}
-                  </span>
-                  <span>
-                    <strong>{gap.skill}</strong>: {gap.recommendation}
-                  </span>
+              <div className="job-list" id="job-list">
+                {jobMatches.map((job, i) => {
+                  const matchLevel = job.matchPercentage >= 80 ? 'high' : job.matchPercentage >= 60 ? 'medium' : 'low';
+                  return (
+                    <div key={i} className="job-card">
+                      <div className="job-card-header">
+                        <h4 className="job-card-title">{job.title}</h4>
+                        <span className={`job-card-match ${matchLevel}`}>
+                          {job.matchPercentage}% Match
+                        </span>
+                      </div>
+                      <p className="job-card-description">{job.description}</p>
+                      {job.requiredSkills?.length > 0 && (
+                        <div className="job-card-skills">
+                          {job.requiredSkills.map((skill, j) => (
+                            <span key={j} className="job-card-skill">{skill}</span>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+
+              {/* CTA to switch to Job Finder */}
+              <div className="jf-cta-banner" onClick={() => setActiveTab('jobs')}>
+                <FiSearch />
+                <span>Want <strong>real job listings</strong> from LinkedIn, Indeed & more? Switch to the <strong>AI Job Finder</strong> tab →</span>
+              </div>
+            </motion.div>
+          )}
+
+          {/* Improvements + Skill Gaps */}
+          <div className="detail-grid">
+            {/* Improvements */}
+            {improvements?.length > 0 && (
+              <motion.div
+                className="detail-panel"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8, duration: 0.5 }}
+              >
+                <div className="detail-panel-header">
+                  <div className="detail-panel-icon orange">
+                    <FiArrowUpRight />
+                  </div>
+                  <h3 className="detail-panel-title">Improvement Tips</h3>
                 </div>
-              ))}
-            </div>
-          </motion.div>
-        )}
-      </div>
+                <div className="improvement-list" id="improvement-list">
+                  {improvements.map((tip, i) => (
+                    <div key={i} className="improvement-item">
+                      <span className="improvement-item-icon"><FiAlertTriangle /></span>
+                      <span>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
 
-      {/* Format Feedback */}
-      {formatFeedback && (
-        <motion.div
-          className="full-panel"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1.0, duration: 0.5 }}
-        >
-          <div className="detail-panel-header">
-            <div className="detail-panel-icon yellow">
-              <FiCheckCircle />
-            </div>
-            <h3 className="detail-panel-title">Resume Format Checklist</h3>
-          </div>
-          <div className="improvement-list" id="format-checklist">
-            <FormatCheckItem label="Contact Information" passed={formatFeedback.hasContactInfo} />
-            <FormatCheckItem label="Professional Summary" passed={formatFeedback.hasSummary} />
-            <FormatCheckItem label="Education Section" passed={formatFeedback.hasEducation} />
-            <FormatCheckItem label="Work Experience" passed={formatFeedback.hasExperience} />
-            <FormatCheckItem label="Projects Section" passed={formatFeedback.hasProjects} />
-            <FormatCheckItem label="Uses Action Verbs" passed={formatFeedback.usesActionVerbs} />
-            <FormatCheckItem label="Quantified Achievements" passed={formatFeedback.hasQuantifiedAchievements} />
-            {formatFeedback.lengthFeedback && (
-              <div className="improvement-item">
-                <span className="improvement-item-icon" style={{ color: '#74b9ff' }}>
-                  <FiMinus />
-                </span>
-                <span>{formatFeedback.lengthFeedback}</span>
-              </div>
+            {/* Skill Gaps */}
+            {skillGaps?.length > 0 && (
+              <motion.div
+                className="detail-panel"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9, duration: 0.5 }}
+              >
+                <div className="detail-panel-header">
+                  <div className="detail-panel-icon red">
+                    <FiAlertCircle />
+                  </div>
+                  <h3 className="detail-panel-title">Skill Gaps to Fill</h3>
+                </div>
+                <div className="improvement-list">
+                  {skillGaps.map((gap, i) => (
+                    <div key={i} className="improvement-item">
+                      <span className="improvement-item-icon" style={{
+                        color: gap.importance === 'high' ? '#ff6b6b' : gap.importance === 'medium' ? '#fdcb6e' : '#74b9ff'
+                      }}>
+                        {gap.importance === 'high' ? '🔴' : gap.importance === 'medium' ? '🟡' : '🔵'}
+                      </span>
+                      <span>
+                        <strong>{gap.skill}</strong>: {gap.recommendation}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
             )}
           </div>
-        </motion.div>
+
+          {/* Format Feedback */}
+          {formatFeedback && (
+            <motion.div
+              className="full-panel"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 1.0, duration: 0.5 }}
+            >
+              <div className="detail-panel-header">
+                <div className="detail-panel-icon yellow">
+                  <FiCheckCircle />
+                </div>
+                <h3 className="detail-panel-title">Resume Format Checklist</h3>
+              </div>
+              <div className="improvement-list" id="format-checklist">
+                <FormatCheckItem label="Contact Information" passed={formatFeedback.hasContactInfo} />
+                <FormatCheckItem label="Professional Summary" passed={formatFeedback.hasSummary} />
+                <FormatCheckItem label="Education Section" passed={formatFeedback.hasEducation} />
+                <FormatCheckItem label="Work Experience" passed={formatFeedback.hasExperience} />
+                <FormatCheckItem label="Projects Section" passed={formatFeedback.hasProjects} />
+                <FormatCheckItem label="Uses Action Verbs" passed={formatFeedback.usesActionVerbs} />
+                <FormatCheckItem label="Quantified Achievements" passed={formatFeedback.hasQuantifiedAchievements} />
+                {formatFeedback.lengthFeedback && (
+                  <div className="improvement-item">
+                    <span className="improvement-item-icon" style={{ color: '#74b9ff' }}>
+                      <FiMinus />
+                    </span>
+                    <span>{formatFeedback.lengthFeedback}</span>
+                  </div>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </div>
+      )}
+
+      {/* Job Finder Tab */}
+      {activeTab === 'jobs' && (
+        <div className="results-tab-content">
+          <JobFinder resumeText={resumeText} analysisResults={results} />
+        </div>
       )}
 
       {/* New Analysis */}

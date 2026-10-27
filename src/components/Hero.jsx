@@ -1,20 +1,21 @@
 import React from 'react';
-import { FiTarget, FiCpu, FiBriefcase, FiTrendingUp } from 'react-icons/fi';
+import { FiTarget, FiCpu, FiBriefcase, FiTrendingUp, FiSearch } from 'react-icons/fi';
 
 export default function Hero() {
   return (
     <section className="hero" id="hero-section">
       <div className="hero-badge">
         <span className="hero-badge-icon">✨</span>
-        AI-Powered Resume Analysis
+        AI-Powered Resume Analysis & Job Matching
       </div>
       <h1>
         Unlock Your Career<br />
         <span className="gradient-text">Potential with AI</span>
       </h1>
       <p className="hero-subtitle">
-        Upload your resume and get instant AI-powered analysis — skill assessment, 
-        ATS compatibility score, job recommendations, and actionable improvement tips.
+        Upload your resume and get instant AI-powered analysis, skill assessment, 
+        ATS compatibility score — then discover <strong>real job listings</strong> from 
+        LinkedIn, Indeed & more, matched to your skills. Plus, auto-generate tailored cover letters!
       </p>
       <div className="hero-features">
         <div className="hero-feature">
@@ -31,15 +32,15 @@ export default function Hero() {
         </div>
         <div className="hero-feature">
           <div className="hero-feature-icon green">
-            <FiBriefcase />
+            <FiSearch />
           </div>
-          <span>Job Matching</span>
+          <span>AI Job Finder</span>
         </div>
         <div className="hero-feature">
           <div className="hero-feature-icon orange">
-            <FiTrendingUp />
+            <FiBriefcase />
           </div>
-          <span>Career Tips</span>
+          <span>Cover Letters</span>
         </div>
       </div>
     </section>

@@ -84,10 +84,10 @@ Rules:
 - overallScore is a weighted average: 40% skills + 30% ATS + 30% impact`;
 
   const candidateModels = [
+    'gemini-3.8-flash',
     'gemini-3.5-flash',
     'gemini-3.5-flash-lite',
     'gemini-3.6-flash',
-    'gemini-3.8-flash',
   ];
   let lastError = null;
   let responseText = null;

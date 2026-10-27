@@ -23,6 +23,7 @@ export default function App() {
   const [rawText, setRawText] = useState('');
   const [apiKey] = useState(DEFAULT_API_KEY);
   const [results, setResults] = useState(null);
+  const [resumeText, setResumeText] = useState('');
   const [error, setError] = useState(null);
 
   const handleFileSelect = useCallback((selectedFile) => {
@@ -57,17 +58,20 @@ export default function App() {
 
     try {
       // Extract text from file or use raw text
-      let resumeText = rawText.trim();
+      let extractedText = rawText.trim();
       if (file) {
-        resumeText = await extractText(file);
+        extractedText = await extractText(file);
       }
 
-      if (!resumeText || resumeText.length < 50) {
+      if (!extractedText || extractedText.length < 50) {
         throw new Error('Resume text is too short. Please upload a valid resume.');
       }
 
+      // Store the resume text for the Job Finder
+      setResumeText(extractedText);
+
       // Analyze with Gemini
-      const analysisResults = await analyzeResume(apiKey || DEFAULT_API_KEY, resumeText);
+      const analysisResults = await analyzeResume(apiKey || DEFAULT_API_KEY, extractedText);
       setResults(analysisResults);
       setAppState(STATE.RESULTS);
 
@@ -87,6 +91,7 @@ export default function App() {
     setFile(null);
     setRawText('');
     setResults(null);
+    setResumeText('');
     setError(null);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }, []);
@@ -134,7 +139,11 @@ export default function App() {
           {appState === STATE.LOADING && <LoadingState />}
 
           {appState === STATE.RESULTS && (
-            <ResultsDashboard results={results} onReset={handleReset} />
+            <ResultsDashboard
+              results={results}
+              resumeText={resumeText}
+              onReset={handleReset}
+            />
           )}
         </main>
 
