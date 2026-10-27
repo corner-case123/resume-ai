@@ -84,10 +84,10 @@ Rules:
 - overallScore is a weighted average: 40% skills + 30% ATS + 30% impact`;
 
   const candidateModels = [
-    'gemini-2.0-flash',        // Latest & fastest
-    'gemini-2.0-flash-lite',   // Lightweight fallback
-    'gemini-1.5-flash',        // Stable fallback
-    'gemini-1.5-flash-8b',     // Smallest/cheapest fallback
+    'gemini-3.8-flash',        // Latest & fastest
+    'gemini-3.5-flash',        // Stable fallback
+    'gemini-2.5-flash',        // Older fallback
+    'gemini-flash-latest',     // Alias fallback
   ];
   let lastError = null;
   let responseText = null;
