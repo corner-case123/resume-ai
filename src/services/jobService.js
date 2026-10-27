@@ -3,7 +3,7 @@
  * which proxies requests to the JSearch API (RapidAPI)
  */
 
-const API_BASE = import.meta.env.VITE_API_BASE || 'http://localhost:3001';
+const API_BASE = import.meta.env.VITE_API_BASE || '';
 
 /**
  * Smart search: send resume text → backend extracts skills via Gemini → searches real jobs

@@ -2,9 +2,10 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "rewrites": [
-    {
-      "source": "/(.*)",
-      "destination": "/"
-    }
+    { "source": "/api/jobs/smart-search", "destination": "/api/jobs/smart-search" },
+    { "source": "/api/jobs/search", "destination": "/api/jobs/search" },
+    { "source": "/api/cover-letter/generate", "destination": "/api/cover-letter/generate" },
+    { "source": "/api/health", "destination": "/api/health" },
+    { "source": "/(.*)", "destination": "/" }
   ]
 }

@@ -25,12 +25,12 @@ const JSEARCH_API_KEY = process.env.JSEARCH_API_KEY || '';
 const JSEARCH_HOST = 'jsearch.p.rapidapi.com';
 const GEMINI_API_KEY = process.env.VITE_GEMINI_API_KEY || '';
 
-// Supported models with cascading fallback (gemini-3.8-flash first)
+// Supported models with cascading fallback
 const CANDIDATE_MODELS = [
-  'gemini-3.8-flash',
-  'gemini-3.5-flash',
-  'gemini-3.5-flash-lite',
-  'gemini-3.6-flash',
+  'gemini-2.0-flash',
+  'gemini-2.0-flash-lite',
+  'gemini-1.5-flash',
+  'gemini-1.5-flash-8b',
 ];
 
 function hasValidJSearchKey() {
